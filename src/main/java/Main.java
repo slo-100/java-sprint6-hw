@@ -1,33 +1,28 @@
 package main.java;
 
-import main.java.intefaces.HistoryManager;
-import main.java.intefaces.TaskManager;
 import main.java.managers.FileBackedTasksManager;
-import main.java.managers.InMemoryTaskManager;
-import main.java.service.Managers;
 import main.java.service.*;
 import main.java.tasks.*;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
+    private final static String sep = File.separator;
+    private static String savesTasksFile = String.join(sep, "src", "main", "java", "saves", "taskSaves" + ".csv");
+    private static File file = new File(savesTasksFile);
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        TaskManager inMemoryTaskManager = Managers.getDefault();
-
-        final String sep = File.separator;
-        final String savesTasks = "src" + sep + "main" + sep + "java" + sep + "saves" + sep + "savesTasks" +
-                ".csv";
-        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(Path.of(savesTasks));
+        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(savesTasksFile);
 
         Task task1 = new Task(TaskType.TASK, "Переезд", Status.NEW, "Собрать коробки");
         Task task2 = new Task(TaskType.TASK, "Переезд", Status.NEW, "Упаковать кошку");
         Task task3 = new Task(TaskType.TASK, "Переезд", Status.NEW, "Сказать слова прощания");
 
+
         Epic epic1 = new Epic(TaskType.EPIC, "Переезд", Status.NEW, "Переезд", new ArrayList<>());
+        Epic epic2 = new Epic(TaskType.EPIC, "Переезд2", Status.NEW, "Переезд2", new ArrayList<>());
 
 
 
@@ -47,21 +42,19 @@ public class Main {
                             fileBackedTasksManager.addTask(task3);
                             break;
                         case 2:
-                            inMemoryTaskManager.addEpic(epic1);
+                            fileBackedTasksManager.addEpic(epic1);
+                            fileBackedTasksManager.addEpic(epic2);
                             break;
                         case 3:
-                            // подразумевается, что подзадача добавляется только после внесении эпика в мапу (из-за
-                            // невомозожности взять epicId до этого момента, так как id теперь присваиваются в
-                            // менеджере)
                             Subtask subtask1 = new Subtask(epic1.getId(), TaskType.SUBTASK, "тест1", Status.NEW,
                                     "Собрать коробки");
                             Subtask subtask2 = new Subtask(epic1.getId(), TaskType.SUBTASK, "тест2", Status.NEW,
                                     "Упаковать кошку");
-                            Subtask subtask3 = new Subtask(epic1.getId(), TaskType.SUBTASK, "тест3", Status.NEW,
+                            Subtask subtask3 = new Subtask(epic2.getId(), TaskType.SUBTASK, "тест3", Status.NEW,
                                     "Сказать слова прощания");
-                            inMemoryTaskManager.addSubtask(subtask1);
-                            inMemoryTaskManager.addSubtask(subtask2);
-                            inMemoryTaskManager.addSubtask(subtask3);
+                            fileBackedTasksManager.addSubtask(subtask1);
+                            fileBackedTasksManager.addSubtask(subtask2);
+                            fileBackedTasksManager.addSubtask(subtask3);
                             break;
                     }
                     break;
@@ -71,13 +64,13 @@ public class Main {
                     int userInputCase2 = scanner.nextInt();
                     switch (userInputCase2) {
                         case 1:
-                            System.out.println(inMemoryTaskManager.getTasks());
+                            System.out.println(fileBackedTasksManager.getTasks());
                             break;
                         case 2:
-                            System.out.println(inMemoryTaskManager.getEpics());
+                            System.out.println(fileBackedTasksManager.getEpics());
                             break;
                         case 3:
-                            System.out.println(inMemoryTaskManager.getSubtasks());
+                            System.out.println(fileBackedTasksManager.getSubtasks());
                             break;
                     }
                     break;
@@ -87,13 +80,13 @@ public class Main {
                     int userInputCase3 = scanner.nextInt();
                     switch (userInputCase3) {
                         case 1:
-                            inMemoryTaskManager.taskClean();
+                            fileBackedTasksManager.taskClean();
                             break;
                         case 2:
-                            inMemoryTaskManager.epicClean();
+                            fileBackedTasksManager.epicClean();
                             break;
                         case 3:
-                            inMemoryTaskManager.subtaskClean();
+                            fileBackedTasksManager.subtaskClean();
                             break;
                     }
                     break;
@@ -102,7 +95,7 @@ public class Main {
                     printMenuCase4();
                     int userInputCase4 = scanner.nextInt();
                     System.out.println("Введите номер идентификатора");
-                    int taskId = scanner.nextInt();
+                    String taskId = scanner.next();
                     switch (userInputCase4) {
                         case 1:
                             System.out.println(fileBackedTasksManager.getTaskById(taskId));
@@ -120,10 +113,11 @@ public class Main {
                     printMenuCase5();
                     int userInputCase5 = scanner.nextInt();
                     System.out.println("Введите номер идентификатора той задачи которую хотите обновить");
-                    int update = scanner.nextInt(); // update1 нужно внести в id задачи
+                    String taskIdCase5 = scanner.next();
                     switch (userInputCase5) {
                         case 1:
-
+                            task3.setDescription("Сказать слова прощания test Case5");
+                            fileBackedTasksManager.updateTask(task3);
                             break;
                         case 2:
 
@@ -132,8 +126,8 @@ public class Main {
                             // Помимо id задачи который хотим заменить нужен также id эпика для обновление списка
                             // поэтому подразумевается что епик уже занесен в мапу
                             Subtask subtaskTest2 = new Subtask(epic1.getId(), TaskType.SUBTASK, "тест1", Status.NEW,
-                                    "Собрать коробки", epic1.getId());
-                            inMemoryTaskManager.updateSubtask(subtaskTest2);
+                                    "Собрать коробки", epic1.getId()); // исправить
+                            fileBackedTasksManager.updateSubtask(subtaskTest2);
                             break;
                     }
                     break;
@@ -142,25 +136,24 @@ public class Main {
                     printMenuCase6();
                     int userInputCase6 = scanner.nextInt();
                     System.out.println("Введите идентификатор для удаления");
-                    int idRemove = scanner.nextInt();
+                    String idRemove = scanner.nextLine();
                     switch (userInputCase6) {
                         case 1:
-                            inMemoryTaskManager.removeTaskById(idRemove);
+                            fileBackedTasksManager.removeTaskById(idRemove);
                             break;
                         case 2:
-                            inMemoryTaskManager.removeEpicById(idRemove);
+                            fileBackedTasksManager.removeEpicById(idRemove);
                             break;
                         case 3:
-                            inMemoryTaskManager.removeSubtaskById(idRemove);
+                            fileBackedTasksManager.removeSubtaskById(idRemove);
                             break;
                     }
                     break;
 
                 case 7: // Изменить статус
                     printMenuCase7();
-                    int statusChange = scanner.nextInt();
                     System.out.println("Введите id задачи, чей статус хотите поменять");
-                    int statusId = scanner.nextInt();
+                    String statusId = scanner.nextLine();
                     System.out.println("Назначьте статус, где:\n1 - Задача новая\n" + "2 - Задача выполнена\n3 - Задача в действии");
                     int check = scanner.nextInt();
                     Status status7 = null;
@@ -175,30 +168,38 @@ public class Main {
                             status7 = Status.IN_PROGRESS;
                             break;
                     }
-                    inMemoryTaskManager.changeStatusSubtask(statusId, status7);
+                    fileBackedTasksManager.changeStatusSubtask(statusId, status7);
                     break;
 
                 case 8: // Получение списка всех подзадач определённого эпика.
                     System.out.println("Получение списка всех подзадач определённого эпика\n" + "Введите id эпика, чтобы получить его подзадачи");
-                    int epicId = scanner.nextInt();
-                    System.out.println(inMemoryTaskManager.getSubtaskList(epicId));
+                    String epicId = scanner.nextLine();
+                    System.out.println(fileBackedTasksManager.getSubtaskList(epicId));
                     break;
 
                 // ТЗ-4
                 case 9: // Информация по просмотрам.
                     System.out.println("Какие задачи были просмотрены:");
-                    System.out.println(inMemoryTaskManager.getHistoryList());
+                    System.out.println(fileBackedTasksManager.getHistoryList());
                     break;
 
-                case 10:
-                    System.out.println("------------------- TEST1 -----------------");
-                    System.out.println(inMemoryTaskManager.getHistoryManager().getViewedTasks());
+                case 10: // тесты
+                    fileBackedTasksManager.save();
+                    System.out.println("test1 getViewedTasks(): " + fileBackedTasksManager.historyManager.getCustomLinkedList());
+                    System.out.println("test2 getViewedTasks(): " + fileBackedTasksManager.historyManager.getCustomLinkedList());
+                    System.out.println("test3 getViewedTasks(): " + fileBackedTasksManager.historyManager.getCustomLinkedList());
+                    fileBackedTasksManager.historyManager.getCustomLinkedList().stream()
+                            .forEach(task -> {System.out.println(task.getId());});
+
+                    System.out.println("test2 getViewedTasks(): " + fileBackedTasksManager.historyManager.getCustomLinkedList());
+
+                    fileBackedTasksManager.historyManager.getCustomLinkedList().stream()
+                            .forEach(task -> {System.out.println(task.getId());});
+                    break;
 /*
 "когда ты создаешь экземпляр класса FileBackedTasksManager fileBackedTasksManager , у тебя автоматиечки создаются все поля родительского класса InMemoryTaskManager, в том числе и новый historyManager, который будет принадлижать только fileBackedTasksManager, и каждый раз когда ты будешь работать с задачами через  fileBackedTasksManager, вся история будет сохраняться в historyManager, а из этого поля ты уже сможешь вытащить список задач viewedTasks(а потом и айдишники, которые ты запишешь в файл)"
  */
                     //
-                    System.out.println(fileBackedTasksManager.getHistoryManager().getViewedTasks());
-                    break;
                 case 0: // Выход
                     menu = false;
                     break;
@@ -217,7 +218,7 @@ public class Main {
         System.out.println("7 - Изменить статус");
         System.out.println("8 - Получение списка всех подзадач определённого эпика");
         System.out.println("9 - Информация по просмотрам");
-        System.out.println("10 - Тест");
+        System.out.println("10 - Сохранить задачи");
 
         System.out.println("0 - Выход");
     }

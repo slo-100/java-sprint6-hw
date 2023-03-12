@@ -6,19 +6,19 @@ import main.java.service.TaskType;
 import java.util.Objects;
 
 public class Subtask extends Task {
-    private int epicId;
+    private String epicId;
 
-    public Subtask(int epicId, TaskType taskType, String name, Status status, String description) {
+    public Subtask(String epicId, TaskType taskType, String name, Status status, String description) {
         super(taskType, name, status, description);
         this.epicId = epicId;
     }
 
-    public Subtask(int id, TaskType taskType, String name, Status status, String description, int epicId) {
+    public Subtask(String id, TaskType taskType, String name, Status status, String description, String epicId) {
         super(id, taskType, name, status, description);
         this.epicId = epicId;
     }
 
-    public int getEpicId() {
+    public String getEpicId() {
         return epicId;
     }
 

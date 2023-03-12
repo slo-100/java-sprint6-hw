@@ -5,9 +5,8 @@ import main.java.tasks.Epic;
 import main.java.tasks.Subtask;
 import main.java.tasks.Task;
 
-import java.io.BufferedReader;
 import java.util.LinkedList;
-import java.util.ArrayList;
+import java.util.List;
 
 public interface TaskManager {
     void addTask(Task task);
@@ -16,51 +15,43 @@ public interface TaskManager {
 
     void addSubtask(Subtask subtask);
 
-    // case 2: Получение списка всех задач.-------------------------------------
-    ArrayList<Task> getTasks();
+    List<Task> getTasks();
 
-    ArrayList<Epic> getEpics();
+    List<Epic> getEpics();
 
-    ArrayList<Subtask> getSubtasks();
+    List<Subtask> getSubtasks();
 
-    // case 3: Удаление всех задач.---------------------------------------
     void taskClean();
 
     void epicClean();
 
     void subtaskClean();
 
-    Task getTaskById(int taskId);
+    Task getTaskById(String taskId);
 
-    Epic getEpicById(int taskId);
+    Epic getEpicById(String taskId);
 
-    Subtask getSubtaskById(int taskId);
+    Subtask getSubtaskById(String taskId);
 
-    // case 5: Обновление. Новая версия объекта с верным идентификатором передаётся в виде параметра.
-// "Это значит что в объекте Task заполнено поле id и мы можем его использовать для обновления объекта. поэтому во всех трёх методах должен на вход подаваться только объект задачи"
     void updateTask(Task task);
 
     void updateEpic(Epic epic);
 
     void updateSubtask(Subtask subtask);
 
-    // case 6: Удалить по идентификатору. ----------------------------------------
-    void removeTaskById(int id);
+    void removeTaskById(String id);
 
-    void removeEpicById(int id);
+    void removeEpicById(String id);
 
-    void removeSubtaskById(int id);
+    void removeSubtaskById(String id);
 
-    // case 7: Изменить статус --------------------------------------------------
-    void changeStatusTask(int id, Status status);
+    void changeStatusTask(String id, Status status);
 
-    void changeStatusSubtask(int id, Status status);
+    void changeStatusSubtask(String id, Status status);
 
-    // case 8: Получение списка всех подзадач определённого эпика. -----------------------------
-    ArrayList<Integer> getSubtaskList(int epicId);
+    List<String> getSubtaskList(String epicId);
 
-    // метод обновления статуса епика
-    void updateEpicStatus(int epicId);
+    void updateEpicStatus(String epicId);
 
     LinkedList<Task> getHistoryList();
 

@@ -1,16 +1,14 @@
 package main.java.intefaces;
 
-import main.java.service.Node;
 import main.java.tasks.Task;
 
 import java.util.List;
-import java.util.Map;
 
 public interface HistoryManager {
 
     void add(Task task);
 
-    void remove(int id);
+    void remove(String id);
 
     List<Task> getCustomLinkedList();
 

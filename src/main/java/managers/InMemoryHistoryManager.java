@@ -26,7 +26,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     @Override
-    public void remove(int id) {
+    public void remove(String id) {
         if (customLinkedList.tasksMap.containsKey(id)) {
             customLinkedList.removeNode(customLinkedList.tasksMap.get(id));
             customLinkedList.tasksMap.remove(id);
@@ -41,7 +41,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 }
 
 class CustomLinkedList<Task> {
-    Map<Integer, Node<Task>> tasksMap = new HashMap<>();
+    Map<String, Node<Task>> tasksMap = new HashMap<>();
     private Node<Task> head;
     protected Node<Task> tail;
     public void linkLast(Task task) {

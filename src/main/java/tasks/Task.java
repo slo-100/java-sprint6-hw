@@ -6,7 +6,7 @@ import main.java.service.TaskType;
 import java.util.Objects;
 
 public class Task {
-    private int id;
+    private String id;
     private TaskType taskType;
     private String name;
     private Status status;
@@ -21,7 +21,7 @@ public class Task {
         this.description = description;
     }
 
-    public Task(int id, TaskType taskType, String name, Status status , String description) {
+    public Task(String id, TaskType taskType, String name, Status status , String description) {
         this.id = id;
         this.taskType = taskType;
         this.name = name;
@@ -29,11 +29,11 @@ public class Task {
         this.description = description;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

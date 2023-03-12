@@ -4,34 +4,34 @@ import main.java.service.Status;
 import main.java.service.TaskType;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class Epic extends Task {
     /*
 Всем привет! а у вас у всех классы Task, Subtask и Epic не имеют ссылок друг на друга? Вчера жестко потратил 2ч на то что gson пытался сделать бесконечный паровозик из моих классов Subtask и Epic, так как у Epic есть массив Subtask'ов и у Subtask есть ссылка на Epic. Как я понял, gson пытался сериализовать Epic, в котором есть Subtask'и, а у него в свою очередь ссылка Epic, и тут начинается бесконечность ) только слово transient разорвало паровоз
  */
-    private transient ArrayList<Integer> subtasksList;
+    private transient List<String> subtasksList;
 
-    public Epic( TaskType taskType, String name, Status status, String description, ArrayList<Integer> subtasksList) {
+    public Epic( TaskType taskType, String name, Status status, String description, List<String> subtasksList) {
         super(taskType, name, status, description);
         this.subtasksList = subtasksList;
     }
 
-    public Epic (int id,  TaskType taskType, String name, Status status, String description) {
+    public Epic (String id,  TaskType taskType, String name, Status status, String description) {
         super(id, taskType, name, status, description);
     }
 
-    public ArrayList<Integer> getSubtasksList() {
+    public List<String> getSubtasksList() {
         return subtasksList;
     }
 
     public void cleanSubtaskIds() {
         subtasksList.clear();
     }
-    public void removeSubtask(int id) {
+    public void removeSubtask(String id) {
         subtasksList.remove(subtasksList.indexOf(id));
     }
-
 
     @Override
     public boolean equals(Object o) {

@@ -1,10 +1,14 @@
-package main.java.service;
-
-public class IdCounter {
-    private int id = 0;
-
-    public  int getId() {
-        return ++id;
-    }
-
-}
+//package main.java.service;
+//
+//import java.util.UUID;
+//
+//public class IdCounter {
+//    private int id = 0;
+//
+//    String identificator = UUID.randomUUID().toString();
+//
+//    public  int getId() {
+//        return ++id;
+//    }
+//
+//}
