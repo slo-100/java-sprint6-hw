@@ -1,4 +1,4 @@
-package main.java.service;
+package main.java.managers;
 
 import main.java.intefaces.HistoryManager;
 import main.java.intefaces.TaskManager;

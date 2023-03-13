@@ -1,8 +1,8 @@
 id,type,name,status,description,epic
-dbedbc40-846d-414e-baa6-d5a54452646e,TASK,Переезд,NEW,Собрать коробки
-e75c9c1f-aa4c-42f9-a0c7-006a0442f2ee,TASK,Переезд,NEW,Упаковать кошку
-78f79d8c-3f5b-40f6-a7fe-c13fa491c529,TASK,Переезд,NEW,Сказать слова прощания
-587369e0-5cf9-4c1f-a5d9-b789754d03d4,EPIC,Переезд,NEW,Переезд
-b2a0b56d-ee9b-4847-96cf-2770d11c81fc,EPIC,Переезд2,NEW,Переезд2
+7addb1dc-f8fd-436a-b96e-33cbb4a4ca30,TASK,Переезд,NEW,Собрать коробки
+840a5e2d-9e81-4c4f-a477-7b69f1f7deea,TASK,Переезд,NEW,Упаковать кошку
+36ec3d6f-1478-4a76-9708-c6dff5dddf97,EPIC,Переезд,NEW,Переезд
+7d469a78-7bcd-4354-b428-c6405ecf2e92,SUBTASK,тест1,NEW,Собрать коробки,36ec3d6f-1478-4a76-9708-c6dff5dddf97
+5cbd01a2-a828-45cf-9d51-19df90a5e600,SUBTASK,тест2,NEW,Упаковать кошку,36ec3d6f-1478-4a76-9708-c6dff5dddf97
 
-e75c9c1f-aa4c-42f9-a0c7-006a0442f2ee,dbedbc40-846d-414e-baa6-d5a54452646e,b2a0b56d-ee9b-4847-96cf-2770d11c81fc
+7addb1dc-f8fd-436a-b96e-33cbb4a4ca30,840a5e2d-9e81-4c4f-a477-7b69f1f7deea,36ec3d6f-1478-4a76-9708-c6dff5dddf97,7d469a78-7bcd-4354-b428-c6405ecf2e92,5cbd01a2-a828-45cf-9d51-19df90a5e600

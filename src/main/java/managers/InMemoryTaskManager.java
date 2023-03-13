@@ -2,7 +2,6 @@ package main.java.managers;
 
 import main.java.intefaces.HistoryManager;
 import main.java.intefaces.TaskManager;
-import main.java.service.Managers;
 import main.java.service.Status;
 import main.java.tasks.Epic;
 import main.java.tasks.Subtask;
@@ -12,11 +11,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class InMemoryTaskManager implements TaskManager {
-    private HashMap<String, Task> tasks = new HashMap<>();
-    private HashMap<String, Epic> epics = new HashMap<>();
-    private HashMap<String, Subtask> subtasks = new HashMap<>();
-    private static List<Task> addedTasks = new ArrayList<>(); // создал ТЗ-6 (хотел объединить три мапы что выше в
-    // одну и оттуда доставать задачи, но возникли проблемы с подзадачами, поэтому пришлось создать это поле)
+    private HashMap<UUID, Task> tasks = new HashMap<>();
+    private HashMap<UUID, Epic> epics = new HashMap<>();
+    private HashMap<UUID, Subtask> subtasks = new HashMap<>();
 
     public HistoryManager historyManager = Managers.getDefaultHistory();
 
@@ -26,28 +23,25 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void addTask(Task task) {
-        task.setId(UUID.randomUUID().toString());
+        task.setId(UUID.randomUUID());
         tasks.put(task.getId(), task);
-        addedTasks.add(task); // добавлено ТЗ-6
         System.out.println("Задача успешно добавлена");
     }
 
     @Override
     public void addEpic(Epic epic) {
-        epic.setId(UUID.randomUUID().toString());
+//        epic.setId(UUID.randomUUID()); ДЛЯ ПРОВЕРКИ ТЗ-6
         epics.put(epic.getId(), epic);
-        addedTasks.add(epic); // добавлено ТЗ-6
         System.out.println("Епик успешно добавлен");
     }
 
     @Override
     public void addSubtask(Subtask subtask) {
-        subtask.setId(UUID.randomUUID().toString());
+        subtask.setId(UUID.randomUUID());
         if (epics.containsKey(subtask.getEpicId())) { // true, если был добавлен эпик // переделать
             subtasks.put(subtask.getId(), subtask);
             epics.get(subtask.getEpicId()).getSubtasksList().add(subtask.getId()); // добавляет id подзадачи в
             // список эпика
-            addedTasks.add(subtask); // добавлено ТЗ-6
             System.out.println("Подзадача успешно добавлена");
             updateEpicStatus(epics.get(subtask.getEpicId()).getId()); // обновляет статус эпика
         } else {
@@ -113,7 +107,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     // ТЗ-4
     // case 4:get методы-------------------------------------------------------------
-    public Task getTaskById(String idInput) {
+    public Task getTaskById(UUID idInput) {
         Task task = null;
         if (tasks.get(idInput) != null) {
             historyManager.add(tasks.get(idInput));
@@ -122,7 +116,7 @@ public class InMemoryTaskManager implements TaskManager {
         return task;
     }
 
-    public Epic getEpicById(String idInput) {
+    public Epic getEpicById(UUID idInput) {
         Epic epic = null;
         if (epics.get(idInput) != null) {
             historyManager.add(epics.get(idInput));
@@ -131,7 +125,7 @@ public class InMemoryTaskManager implements TaskManager {
         return epic;
     }
 
-    public Subtask getSubtaskById(String idInput) {
+    public Subtask getSubtaskById(UUID idInput) {
         Subtask subtask = null;
         if (subtasks.get(idInput) != null) {
             historyManager.add(subtasks.get(idInput));
@@ -156,7 +150,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateEpic(Epic epic) {
-        final String id = epic.getId();
+        final UUID id = epic.getId();
         for (Epic e : epics.values()) {
             if (e.getId() == id) {
                 epics.put(e.getId(), epic);
@@ -167,8 +161,8 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateSubtask(Subtask subtask) {
-        final String id = subtask.getId();
-        final String epicId = subtask.getEpicId();
+        final UUID id = subtask.getId();
+        final UUID epicId = subtask.getEpicId();
         if (epics.containsKey(epicId) && subtasks.containsKey(id)) {
             subtasks.put(id, subtask);
             System.out.println("Обновление прошло успешно");
@@ -178,7 +172,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     // case 6: Удалить по идентификатору. ----------------------------------------
     @Override
-    public void removeTaskById(String id) {
+    public void removeTaskById(UUID id) {
         if (tasks.containsKey(id)) {
             tasks.remove(id);
             historyManager.remove(id);
@@ -187,12 +181,12 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void removeEpicById(String id) {
-        List<String> list;
+    public void removeEpicById(UUID id) {
+        List<UUID> list;
         if (epics.containsKey(id)) {
             list = epics.get(id).getSubtasksList();
             for (Subtask subtask : subtasks.values()) {
-                for (String subtaskId : list) {
+                for (UUID subtaskId : list) {
                     if (subtask.getId() == subtaskId) {
                         subtasks.remove(subtask.getEpicId()); // то удаляем
                     }
@@ -206,7 +200,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void removeSubtaskById(String id) {
+    public void removeSubtaskById(UUID id) {
         if (epics.containsKey(subtasks.get(id).getEpicId())) {
             epics.get(subtasks.get(id).getEpicId()).removeSubtask(id);
             System.out.println("Удаление прошло успешно");
@@ -221,7 +215,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     // case 7: Изменить статус --------------------------------------------------
     @Override
-    public void changeStatusTask(String id, Status status) {
+    public void changeStatusTask(UUID id, Status status) {
         if (tasks.containsKey(id)) {
             tasks.get(id).setStatus(status);
             System.out.println("Статус изменён");
@@ -231,7 +225,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void changeStatusSubtask(String id, Status status) {
+    public void changeStatusSubtask(UUID id, Status status) {
         if (subtasks.containsKey(id)) {
             subtasks.get(id).setStatus(status);
             System.out.println("Статус изменён");
@@ -243,8 +237,8 @@ public class InMemoryTaskManager implements TaskManager {
 
     // case 8: Получение списка всех подзадач определённого эпика. -----------------------------
     @Override
-    public List<String> getSubtaskList(String epicId) {
-        for (String id : epics.keySet()) {
+    public List<UUID> getSubtaskList(UUID epicId) {
+        for (UUID id : epics.keySet()) {
             if (epics.get(id).getId() == epicId) {
                 return epics.get(id).getSubtasksList();
             }
@@ -254,7 +248,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     // метод обновления статуса епика
     @Override
-    public void updateEpicStatus(String id) {
+    public void updateEpicStatus(UUID id) {
         if (epics.containsKey(id)) {
             boolean inProgress = true;
             // если у эпика нет подзадач или все они имеют статус NEW, то статус должен быть NEW.
@@ -303,17 +297,8 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     // case 9:
-    public LinkedList<Task> getHistoryList() {
-        final LinkedList<Task> list = new LinkedList<>();
-        for (Task task : historyManager.getCustomLinkedList()) {
-            list.add(task);
-        }
-        return list;
-    }
-
-    protected static List<Task> getAddedTasks() { // ТЗ-6
-        return addedTasks;
+    public List<Task> getHistoryList() {
+        return historyManager.getCustomLinkedList();
     }
 
 }
-

@@ -8,7 +8,6 @@ import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
     private CustomLinkedList<Task> customLinkedList = new CustomLinkedList<>(); // класс с нодами
-    private List<Task> viewedTasks = new ArrayList<>(); // ТЗ-6
 
     @Override
     public void add(Task task) {
@@ -17,7 +16,6 @@ public class InMemoryHistoryManager implements HistoryManager {
             customLinkedList.removeNode(customLinkedList.tasksMap.get(task.getId()));
         }
         customLinkedList.tasksMap.put(task.getId(), customLinkedList.tail);
-        viewedTasks.add(task); // ТЗ - 6.1
     }
 
     @Override
@@ -26,30 +24,27 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     @Override
-    public void remove(String id) {
+    public void remove(UUID id) {
         if (customLinkedList.tasksMap.containsKey(id)) {
             customLinkedList.removeNode(customLinkedList.tasksMap.get(id));
             customLinkedList.tasksMap.remove(id);
         }
     }
-
-    @Override
-    public List<Task> getViewedTasks() { // ТЗ-6
-            return viewedTasks;
-    }
-
 }
 
 class CustomLinkedList<Task> {
-    Map<String, Node<Task>> tasksMap = new HashMap<>();
+    Map<UUID, Node<Task>> tasksMap = new HashMap<>();
     private Node<Task> head;
     protected Node<Task> tail;
+    protected Node<Task> temp; // для повторного использования getCustomLinkedList()
+
     public void linkLast(Task task) {
         final Node<Task> oldTail = tail;
         final Node<Task> newNode = new Node<>(oldTail, task, null);
         tail = newNode;
         if (oldTail == null) {
             head = newNode;
+            temp = head;
         } else {
             oldTail.next = newNode;
         }
@@ -63,6 +58,7 @@ class CustomLinkedList<Task> {
             head = head.next;
             current = head;
         }
+        head = temp;
         return tasks;
     }
 
@@ -91,6 +87,4 @@ class CustomLinkedList<Task> {
             }
         }
     }
-
-
 }

@@ -4,21 +4,22 @@ import main.java.service.Status;
 import main.java.service.TaskType;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class Subtask extends Task {
-    private String epicId;
+    private UUID epicId;
 
-    public Subtask(String epicId, TaskType taskType, String name, Status status, String description) {
+    public Subtask(TaskType taskType, String name, Status status, String description, UUID epicId) {
         super(taskType, name, status, description);
         this.epicId = epicId;
     }
 
-    public Subtask(String id, TaskType taskType, String name, Status status, String description, String epicId) {
+    public Subtask(UUID id, TaskType taskType, String name, Status status, String description, UUID epicId) {
         super(id, taskType, name, status, description);
         this.epicId = epicId;
     }
 
-    public String getEpicId() {
+    public UUID getEpicId() {
         return epicId;
     }
 

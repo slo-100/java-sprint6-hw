@@ -4,9 +4,10 @@ import main.java.service.Status;
 import main.java.service.TaskType;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class Task {
-    private String id;
+    private UUID id;
     private TaskType taskType;
     private String name;
     private Status status;
@@ -21,7 +22,7 @@ public class Task {
         this.description = description;
     }
 
-    public Task(String id, TaskType taskType, String name, Status status , String description) {
+    public Task(UUID id, TaskType taskType, String name, Status status , String description) {
         this.id = id;
         this.taskType = taskType;
         this.name = name;
@@ -29,11 +30,11 @@ public class Task {
         this.description = description;
     }
 
-    public String getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

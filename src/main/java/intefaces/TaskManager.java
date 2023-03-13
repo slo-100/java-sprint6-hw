@@ -7,6 +7,7 @@ import main.java.tasks.Task;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 public interface TaskManager {
     void addTask(Task task);
@@ -27,11 +28,11 @@ public interface TaskManager {
 
     void subtaskClean();
 
-    Task getTaskById(String taskId);
+    Task getTaskById(UUID taskId);
 
-    Epic getEpicById(String taskId);
+    Epic getEpicById(UUID taskId);
 
-    Subtask getSubtaskById(String taskId);
+    Subtask getSubtaskById(UUID taskId);
 
     void updateTask(Task task);
 
@@ -39,21 +40,21 @@ public interface TaskManager {
 
     void updateSubtask(Subtask subtask);
 
-    void removeTaskById(String id);
+    void removeTaskById(UUID id);
 
-    void removeEpicById(String id);
+    void removeEpicById(UUID id);
 
-    void removeSubtaskById(String id);
+    void removeSubtaskById(UUID id);
 
-    void changeStatusTask(String id, Status status);
+    void changeStatusTask(UUID id, Status status);
 
-    void changeStatusSubtask(String id, Status status);
+    void changeStatusSubtask(UUID id, Status status);
 
-    List<String> getSubtaskList(String epicId);
+    List<UUID> getSubtaskList(UUID epicId);
 
-    void updateEpicStatus(String epicId);
+    void updateEpicStatus(UUID epicId);
 
-    LinkedList<Task> getHistoryList();
+    List<Task> getHistoryList();
 
     HistoryManager getHistoryManager();
 
