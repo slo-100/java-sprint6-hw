@@ -9,6 +9,7 @@ import main.java.tasks.Subtask;
 import main.java.tasks.Task;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -16,9 +17,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     private static final String sep = File.separator;
     private static final String saveTasksFilePath = String.join(sep, "src", "main", "java", "saves", "taskSaves" + ".csv");
     private static File file = new File(saveTasksFilePath);
-    private File getFile() {
-        return file;
-    }
 
     // +++++++++++++++++++++++++++++++++++++++ TEST BLOCK +++++++++++++++++++++++++++++++++++++++
     public static void main(String[] args) throws IOException {
@@ -26,37 +24,37 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 // - создать менеджер1 через конструктор, передав в него файл,
         FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(file);
 
-        FileBackedTasksManager fileBackedTasksManagerTEST;
-
 // - создать несколько задач, добавить из в менеджер, вызвать - что бы заполнилась история,
+
         Task task1 = new Task(UUID.randomUUID(), TaskType.TASK, "Переезд", Status.NEW, "Собрать коробки");
         Task task2 = new Task(UUID.randomUUID(), TaskType.TASK, "Переезд", Status.NEW, "Упаковать кошку");
         Epic epic1 = new Epic(UUID.randomUUID(), TaskType.EPIC, "Переезд", Status.NEW, "Переезд", new ArrayList<>());
         Subtask subtask1 = new Subtask(TaskType.SUBTASK, "тест1", Status.NEW, "Собрать коробки", epic1.getId());
         Subtask subtask2 = new Subtask(TaskType.SUBTASK, "тест2", Status.NEW, "Упаковать кошку", epic1.getId());
 
-        fileBackedTasksManager.addTask(task1);
-        fileBackedTasksManager.addTask(task2);
-        fileBackedTasksManager.addEpic(epic1);
-        fileBackedTasksManager.addSubtask(subtask1);
-        fileBackedTasksManager.addSubtask(subtask2);
-
-        fileBackedTasksManager.getTaskById(task1.getId());
-        fileBackedTasksManager.getTaskById(task2.getId());
-        fileBackedTasksManager.getEpicById(epic1.getId());
-        fileBackedTasksManager.getSubtaskById(subtask1.getId());
-        fileBackedTasksManager.getSubtaskById(subtask2.getId());
-
-        System.out.println("- вывести в консоль все задачи и историю менеджера 1");
-        fileBackedTasksManager.historyManager.getCustomLinkedList().stream().forEach(System.out::println);
-
-        fileBackedTasksManager.historyManager.getCustomLinkedList().stream().forEach(task -> System.out.println(task.getId()));
-
-        fileBackedTasksManager.save();
-        System.out.println();
+//        fileBackedTasksManager.addTask(task1);
+//        fileBackedTasksManager.addTask(task2);
+//        fileBackedTasksManager.addEpic(epic1);
+//        fileBackedTasksManager.addSubtask(subtask1);
+//        fileBackedTasksManager.addSubtask(subtask2);
+//
+//        fileBackedTasksManager.getTaskById(task1.getId());
+//        fileBackedTasksManager.getTaskById(task2.getId());
+//        fileBackedTasksManager.getEpicById(epic1.getId());
+//        fileBackedTasksManager.getSubtaskById(subtask1.getId());
+//        fileBackedTasksManager.getSubtaskById(subtask2.getId());
+//
+//        System.out.println("- вывести в консоль все задачи и историю менеджера 1");
+//        fileBackedTasksManager.historyManager.getCustomLinkedList().stream().forEach(System.out::println);
+//
+//        fileBackedTasksManager.historyManager.getCustomLinkedList().stream().forEach(task -> System.out.println(task.getId()));
+//
+//        fileBackedTasksManager.save(fileBackedTasksManager.historyManager);
+//        System.out.println();
 
 // - при помощи метода loadFromFile, используя файл из 1 менеджера, создать менеджер2
-        FileBackedTasksManager fileBackedTasksManager2 = loadFromFile(fileBackedTasksManager.getFile());
+// Как понимаю чтобы корректно работало надо закомментировать код выше и запустить
+        FileBackedTasksManager fileBackedTasksManager2 = loadFromFile(fileBackedTasksManager.file);
 
         System.out.println("- вывести в консоль все задачаи и историю менеджера2");
         fileBackedTasksManager2.fromString().stream().forEach(System.out::println);
@@ -69,9 +67,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         this.file = file;
     }
 
-    // (ТЗ-6) Помимо метода сохранения создайте статический метод static FileBackedTasksManager loadFromFile(File
-    //  file), который будет восстанавливать данные менеджера из файла при запуске программы.
-    // Не забудьте убедиться, что новый менеджер задач работает так же, как предыдущий.
     private static FileBackedTasksManager loadFromFile(File file) {
         var manager = new FileBackedTasksManager(file);
         return manager;
@@ -97,52 +92,30 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return listString;
     }
 
-    // (ТЗ-6) Напишите статические методы static String historyToString(HistoryManager manager)
-    // и static List<Integer> historyFromString(String value)
-    // для сохранения и восстановления менеджера истории из CSV.
+    public void save(HistoryManager manager) {
+        try (BufferedWriter out = new BufferedWriter(new FileWriter(file, StandardCharsets.UTF_8))) {
+            String viewedTasksIdToLine = "";
+            int count = 0;
+
+            out.write("id,type,name,status,description,epic\n");
+            for (Task task : historyManager.getCustomLinkedList()) {
+                out.write(task.toCsvFormat() + "\n");
+            }
+
+            String lastLine = historyToString(manager);
+
+            out.write("\n"); // пустая строка после задач
+            out.write(lastLine);
+            out.close();
+        } catch (IOException e) {
+            throw new ManagerSaveException(e.getMessage());
+        }
+    }
 
     private static String historyToString(HistoryManager manager) {
         String line = manager.getCustomLinkedList().stream()
                 .map(task -> task.getId().toString()).collect(Collectors.joining(","));
         return line;
-    }
-
-    // (ТЗ-6) Создайте метод save без параметров — он будет сохранять текущее состояние менеджера в указанный файл
-/* *из пачки
-Про сигнатуру менеджера - у тебя в интерфейсе менеджера есть методы
-типа getTask, addTask и тому подобное
-В реализации FileBackedManager у тебя в каждом из них будет внутри метод save() - он вызывает cheched IOException - тебе нужно его обрабатывать - либо пробрасывать через сигнатуру метода, либо через try-catch блок
-Если ты пробросишь через throws, изменится та самая сигнатура - то есть тебе придется в твоем изначальном интерфейсе поменять все методы - добавить в них throws IOException
-Менять интерфейс из-за одной конкретной реализации дурной тон, поэтому надо обрабатывать через try-catch
-Если же ты просто обработаешь исключение через try-catch, то твоя программа будет работать дальше как ни в чем не бывало - этого тоже быть не должно, потому что в таком случае где-то внутри твоей программы ошибка, которую уже не отследить (программа продолжает работать, но в каком-то месте есть ошибка) - для это в блоке catch нужно добавить
-throws new MyException(), которое будет унаследовано от RuntimeException - оно unchecked, и его не надо помещать в сигнатуру метода
-
-Можно с тем же успехом пробрасывать RuntimeException, но со своим собственным исключением будет легче при отладке - сразу будет ясно, где ошибка в бизнес-логике, а где именно в том, как устроен код
- */
-    public void save() {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(saveTasksFilePath))) {
-            String viewedTasksIdToLine = "";
-            int count = 0;
-
-            bw.write("id,type,name,status,description,epic\n");
-            for (Task task : historyManager.getCustomLinkedList()) {
-                bw.write(task.toCsvFormat() + "\n");
-            }
-
-            for (int i = 0; i < getHistoryManager().getCustomLinkedList().size(); i++) { // ТЗ - 6.1
-                if (count < getHistoryManager().getCustomLinkedList().size() - 1) {
-                    viewedTasksIdToLine = viewedTasksIdToLine.concat((getHistoryManager().getCustomLinkedList().get(i).getId()) + ",");
-                } else {
-                    viewedTasksIdToLine = viewedTasksIdToLine.concat((getHistoryManager().getCustomLinkedList().get(i).getId()) + "");
-                }
-                count++;
-            }
-
-            bw.newLine(); // пустая строка после задач
-            bw.write(viewedTasksIdToLine);
-        } catch (IOException e) {
-            throw new ManagerSaveException(e.getMessage());
-        }
     }
 
     // ТЗ-6. Напишите метод создания задачи из строки
@@ -209,18 +182,18 @@ throws new MyException(), которое будет унаследовано о�
     }
 
     private List<List<String>> readFromCsvTasks() {
-        List<List<String>> listOfAddedTasks = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(getFile()))) {
+        List<List<String>> addedTasks = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
             List<String> innerList;
             while ((line = br.readLine()) != null) {
                 innerList = new ArrayList<>(Arrays.asList(line.split(",")));
-                listOfAddedTasks.add(innerList);
+                addedTasks.add(innerList);
             }
-            listOfAddedTasks.remove(0);
-            listOfAddedTasks.remove(listOfAddedTasks.size() - 1);
-            listOfAddedTasks.remove(listOfAddedTasks.size() - 1);
-            return listOfAddedTasks;
+            addedTasks.remove(0);
+            addedTasks.remove(addedTasks.size() - 1);
+            addedTasks.remove(addedTasks.size() - 1);
+            return addedTasks;
         } catch (IOException e) {
             throw new ManagerSaveException();
         }
@@ -238,7 +211,7 @@ throws new MyException(), которое будет унаследовано о�
     private List<String> readCsvHistoryFromFile() {
         List<UUID> listOfAddedTasks = null;
         List<String> listOfStrings;
-        try (BufferedReader br = new BufferedReader(new FileReader(getFile()))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String lastLine = null;
             String line = br.readLine();
             while (line != null) {

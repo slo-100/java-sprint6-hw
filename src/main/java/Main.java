@@ -185,7 +185,7 @@ public class Main {
                     break;
 
                 case 10: // тесты
-                    fileBackedTasksManager.save();
+//                    fileBackedTasksManager.save();
                     System.out.println("test3 getViewedTasks(): " + fileBackedTasksManager.historyManager.getCustomLinkedList());
                     fileBackedTasksManager.historyManager.getCustomLinkedList().stream()
                             .forEach(task -> {System.out.println(task.getId());});
