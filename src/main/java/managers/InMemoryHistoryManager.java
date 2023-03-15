@@ -36,7 +36,7 @@ class CustomLinkedList<Task> {
     Map<UUID, Node<Task>> tasksMap = new HashMap<>();
     private Node<Task> head;
     protected Node<Task> tail;
-    protected Node<Task> temp; // для повторного использования getCustomLinkedList()
+    private Node<Task> temp; // для повторного использования getCustomLinkedList()
 
     public void linkLast(Task task) {
         final Node<Task> oldTail = tail;
@@ -62,27 +62,23 @@ class CustomLinkedList<Task> {
         return tasks;
     }
 
-    public void removeNode(Node node) {
-        final Node<Task> next = node.next;
-        final Node<Task> prev = node.prev;
-
-        // Если в списке всего один элемент и мы его удаляем, то хвост и голова должны стать null
-        if (next == null && prev == null) {
+    public void removeNode(Node<Task> node) {
+        if (node.next == null && node.prev == null) {
             head = null;
             tail = null;
         } else {
 
-            if (prev == null) {
-                head = next;
+            if (node.prev == null) {
+                head = node.next;
             } else {
-                prev.next = next;
+                node.prev.next = node.next;
                 node.prev = null;
             }
 
-            if (next == null) {
-                tail = prev;
+            if (node.next == null) {
+                tail = node.prev;
             } else {
-                next.prev = prev;
+                node.next.prev = node.prev;
                 node.next = null;
             }
         }

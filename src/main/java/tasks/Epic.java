@@ -11,34 +11,32 @@ public class Epic extends Task {
     /*
 Всем привет! а у вас у всех классы Task, Subtask и Epic не имеют ссылок друг на друга? Вчера жестко потратил 2ч на то что gson пытался сделать бесконечный паровозик из моих классов Subtask и Epic, так как у Epic есть массив Subtask'ов и у Subtask есть ссылка на Epic. Как я понял, gson пытался сериализовать Epic, в котором есть Subtask'и, а у него в свою очередь ссылка Epic, и тут начинается бесконечность ) только слово transient разорвало паровоз
  */
-    private transient List<UUID> subtasksList;
+    private transient List<UUID> subtasks;
 
-    public Epic(UUID id, TaskType taskType, String name, Status status, String description) {
-        super(id, taskType, name, status, description);
-        this.subtasksList = subtasksList;
-    }
-    public Epic(TaskType taskType, String name, Status status, String description) {
+    public Epic(TaskType taskType, String name, Status status, String description, List<UUID> subtasks) {
         super(taskType, name, status, description);
-        this.subtasksList = subtasksList;
+        this.subtasks = subtasks;
     }
 
-    public Epic(UUID id,  TaskType taskType, String name, Status status, String description, List<UUID> subtasksList) {
+    public Epic(UUID id,  TaskType taskType, String name, Status status, String description, List<UUID> subtasks) {
         super(id, taskType, name, status, description);
-        this.subtasksList = subtasksList;
+        this.subtasks = subtasks;
     }
 
-    public List<UUID> getSubtasksList() {
-        return subtasksList;
+
+    @Override
+    public List<UUID> getSubtasks() {
+        return subtasks;
     }
-    public void setSubtasksList(List<UUID> subtasksList) {
-        this.subtasksList = subtasksList;
+    public void setSubtasks(List<UUID> subtasks) {
+        this.subtasks = subtasks;
     }
 
     public void cleanSubtaskIds() {
-        subtasksList.clear();
+        subtasks.clear();
     }
     public void removeSubtask(UUID id) {
-        subtasksList.remove(subtasksList.indexOf(id));
+        subtasks.remove(subtasks.indexOf(id));
     }
 
     @Override
@@ -47,17 +45,17 @@ public class Epic extends Task {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Epic epic = (Epic) o;
-        return Objects.equals(subtasksList, epic.subtasksList);
+        return Objects.equals(subtasks, epic.subtasks);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), subtasksList);
+        return Objects.hash(super.hashCode(), subtasks);
     }
 
     @Override
     public String toString() {
-        return "Epic{" + "id=" + getId() + ", subtasksList=" + subtasksList + ", name='" + getName()
+        return "Epic{" + "id=" + getId() + ", subtasksList=" + subtasks + ", name='" + getName()
                 + '\'' + ", description='" + getDescription() + '\'' + ", status='" + getStatus() + '\'' + '}';
     }
 

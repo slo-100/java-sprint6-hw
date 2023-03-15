@@ -1,8 +1,2 @@
 id,type,name,status,description,epic
-44a7d835-cc4d-4278-b71f-213e6e616d11,TASK,Переезд,NEW,Собрать коробки
-1a45585a-373e-4ddd-a335-4c3b79c37f65,TASK,Переезд,NEW,Упаковать кошку
-c7e0a86e-2645-4512-b9de-43bc8ad017e1,EPIC,Переезд,NEW,Переезд
-7a74fa56-960b-4a03-bb7c-87e25586a86c,SUBTASK,тест1,NEW,Собрать коробки,c7e0a86e-2645-4512-b9de-43bc8ad017e1
-47415258-6eec-45e6-a1d7-f2fb480f2249,SUBTASK,тест2,NEW,Упаковать кошку,c7e0a86e-2645-4512-b9de-43bc8ad017e1
 
-44a7d835-cc4d-4278-b71f-213e6e616d11,1a45585a-373e-4ddd-a335-4c3b79c37f65,c7e0a86e-2645-4512-b9de-43bc8ad017e1,7a74fa56-960b-4a03-bb7c-87e25586a86c,47415258-6eec-45e6-a1d7-f2fb480f2249

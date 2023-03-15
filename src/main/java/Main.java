@@ -6,6 +6,7 @@ import main.java.tasks.*;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.UUID;
 
@@ -16,16 +17,21 @@ public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(file);
-
+        List<UUID> subtasksList = new ArrayList<>(); // пока так
         Task task1 = new Task(TaskType.TASK, "Переезд", Status.NEW, "Собрать коробки");
         Task task2 = new Task(TaskType.TASK, "Переезд", Status.NEW, "Упаковать кошку");
         Task task3 = new Task(TaskType.TASK, "Переезд", Status.NEW, "Сказать слова прощания");
 
 
-        Epic epic1 = new Epic(TaskType.EPIC, "Переезд", Status.NEW, "Переезд");
-        Epic epic2 = new Epic(TaskType.EPIC, "Переезд2", Status.NEW, "Переезд2");
+        Epic epic1 = new Epic(UUID.randomUUID(), TaskType.EPIC, "Переезд", Status.NEW, "Переезд", subtasksList);
+        Epic epic2 = new Epic(UUID.randomUUID(), TaskType.EPIC, "Переезд2", Status.NEW, "Переезд2", subtasksList);
 
-
+        Subtask subtask1 = new Subtask(TaskType.SUBTASK, "тест1", Status.NEW,
+                "Собрать коробки", epic1.getId());
+        Subtask subtask2 = new Subtask(TaskType.SUBTASK, "тест2", Status.NEW,
+                "Упаковать кошку", epic1.getId());
+        Subtask subtask3 = new Subtask(TaskType.SUBTASK, "тест3", Status.NEW,
+                "Сказать слова прощания", epic1.getId());
 
         boolean menu = true;
         while (menu) {
@@ -38,79 +44,69 @@ public class Main {
                     int userInputCase1 = scanner.nextInt();
                     switch (userInputCase1) {
                         case 1:
-                            fileBackedTasksManager.addTask(task1);
-                            fileBackedTasksManager.addTask(task2);
-                            fileBackedTasksManager.addTask(task3);
+                            fileBackedTasksManager.addNewTask(task1);
+                            fileBackedTasksManager.addNewTask(task2);
+                            fileBackedTasksManager.addNewTask(task3);
                             break;
                         case 2:
-                            fileBackedTasksManager.addEpic(epic1);
-                            fileBackedTasksManager.addEpic(epic2);
+                            fileBackedTasksManager.addNewTask(epic1);
+                            fileBackedTasksManager.addNewTask(epic2);
                             break;
                         case 3:
-                            Subtask subtask1 = new Subtask(TaskType.SUBTASK, "тест1", Status.NEW,
-                                    "Собрать коробки", epic1.getId());
-                            Subtask subtask2 = new Subtask(TaskType.SUBTASK, "тест2", Status.NEW,
-                                    "Упаковать кошку", epic1.getId());
-                            Subtask subtask3 = new Subtask(TaskType.SUBTASK, "тест3", Status.NEW,
-                                    "Сказать слова прощания", epic1.getId());
-                            fileBackedTasksManager.addSubtask(subtask1);
-                            fileBackedTasksManager.addSubtask(subtask2);
-                            fileBackedTasksManager.addSubtask(subtask3);
+                            fileBackedTasksManager.addNewTask(subtask1);
+                            fileBackedTasksManager.addNewTask(subtask2);
+                            fileBackedTasksManager.addNewTask(subtask3);
                             break;
                     }
                     break;
 
                 case 2: // Получение всех задач
                     printMenuCase2();
+                    TaskType taskType2;
                     int userInputCase2 = scanner.nextInt();
                     switch (userInputCase2) {
                         case 1:
-                            System.out.println(fileBackedTasksManager.getTasks());
+                            taskType2 = TaskType.TASK;
+                            System.out.println(fileBackedTasksManager.getAllTasksByTaskType(taskType2));
                             break;
                         case 2:
-                            System.out.println(fileBackedTasksManager.getEpics());
+                            taskType2 = TaskType.EPIC;
+                            System.out.println(fileBackedTasksManager.getAllTasksByTaskType(taskType2));
                             break;
                         case 3:
-                            System.out.println(fileBackedTasksManager.getSubtasks());
+                            taskType2 = TaskType.SUBTASK;
+                            System.out.println(fileBackedTasksManager.getAllTasksByTaskType(taskType2));
                             break;
                     }
                     break;
 
                 case 3: // Удаление всех задач
                     printMenuCase3();
+                    TaskType taskType3;
                     int userInputCase3 = scanner.nextInt();
                     switch (userInputCase3) {
                         case 1:
-                            fileBackedTasksManager.taskClean();
+                            taskType3 = TaskType.TASK;
+                            fileBackedTasksManager.taskClean(taskType3);
                             break;
                         case 2:
-                            fileBackedTasksManager.epicClean();
+                            taskType3 = TaskType.EPIC;
+                            fileBackedTasksManager.taskClean(taskType3);
                             break;
                         case 3:
-                            fileBackedTasksManager.subtaskClean();
+                            taskType3 = TaskType.SUBTASK;
+                            fileBackedTasksManager.taskClean(taskType3);
                             break;
                     }
                     break;
 
                 case 4: // получение по id
-                    printMenuCase4();
-                    int userInputCase4 = scanner.nextInt();
                     System.out.println("Введите номер идентификатора");
                     UUID taskId = UUID.fromString(scanner.next());
-                    switch (userInputCase4) {
-                        case 1:
-                            System.out.println(fileBackedTasksManager.getTaskById(taskId));
-                            break;
-                        case 2:
-                            System.out.println(fileBackedTasksManager.getEpicById(taskId));
-                            break;
-                        case 3:
-                            System.out.println(fileBackedTasksManager.getSubtaskById(taskId));
-                            break;
-                    }
+                    System.out.println(fileBackedTasksManager.getTaskById(taskId));
                     break;
 
-                case 5: // обновление по id
+                case 5: // обновление по id Посмотреть ТЗ по Id или сама задачи
                     printMenuCase5();
                     int userInputCase5 = scanner.nextInt();
                     System.out.println("Введите номер идентификатора той задачи которую хотите обновить");
@@ -128,48 +124,35 @@ public class Main {
                             // поэтому подразумевается что епик уже занесен в мапу
                             Subtask subtaskTest2 = new Subtask(TaskType.SUBTASK, "тест1", Status.NEW,
                                     "Собрать коробки", epic1.getId()); // исправить
-                            fileBackedTasksManager.updateSubtask(subtaskTest2);
+//                            fileBackedTasksManager.updateSubtask(subtaskTest2);
                             break;
                     }
                     break;
 
                 case 6: // Удаление по идентификатору.
-                    printMenuCase6();
-                    int userInputCase6 = scanner.nextInt();
                     System.out.println("Введите идентификатор для удаления");
-                    UUID idRemove = UUID.fromString(scanner.nextLine());
-                    switch (userInputCase6) {
-                        case 1:
-                            fileBackedTasksManager.removeTaskById(idRemove);
-                            break;
-                        case 2:
-                            fileBackedTasksManager.removeEpicById(idRemove);
-                            break;
-                        case 3:
-                            fileBackedTasksManager.removeSubtaskById(idRemove);
-                            break;
-                    }
+                    UUID id = UUID.fromString(scanner.next());
+                    fileBackedTasksManager.removeTaskById(id);
                     break;
 
                 case 7: // Изменить статус
-                    printMenuCase7();
                     System.out.println("Введите id задачи, чей статус хотите поменять");
-                    UUID statusId = UUID.fromString(scanner.nextLine());
+                    UUID statusId = UUID.fromString(scanner.next());
                     System.out.println("Назначьте статус, где:\n1 - Задача новая\n" + "2 - Задача выполнена\n3 - Задача в действии");
                     int check = scanner.nextInt();
-                    Status status7 = null;
+                    Status status = null;
                     switch (check) {
                         case 1:
-                            status7 = Status.NEW;
+                            status = Status.NEW;
                             break;
                         case 2:
-                            status7 = Status.DONE;
+                            status = Status.DONE;
                             break;
                         case 3:
-                            status7 = Status.IN_PROGRESS;
+                            status = Status.IN_PROGRESS;
                             break;
                     }
-                    fileBackedTasksManager.changeStatusSubtask(statusId, status7);
+                    fileBackedTasksManager.changeStatusTask(statusId, status);
                     break;
 
                 case 8: // Получение списка всех подзадач определённого эпика.
@@ -184,16 +167,13 @@ public class Main {
                     System.out.println(fileBackedTasksManager.getHistoryList());
                     break;
 
-                case 10: // тесты
-//                    fileBackedTasksManager.save();
-                    System.out.println("test3 getViewedTasks(): " + fileBackedTasksManager.historyManager.getCustomLinkedList());
-                    fileBackedTasksManager.historyManager.getCustomLinkedList().stream()
-                            .forEach(task -> {System.out.println(task.getId());});
+                case 10: // Сохранить в файл
+                    fileBackedTasksManager.saveToFile();
+//                    System.out.println("test3 getViewedTasks(): " + fileBackedTasksManager.historyManager.getCustomLinkedList());
+//                    fileBackedTasksManager.historyManager.getCustomLinkedList().stream()
+//                            .forEach(task -> {System.out.println(task.getId());});
                     break;
-/*
-"когда ты создаешь экземпляр класса FileBackedTasksManager fileBackedTasksManager , у тебя автоматиечки создаются все поля родительского класса InMemoryTaskManager, в том числе и новый historyManager, который будет принадлижать только fileBackedTasksManager, и каждый раз когда ты будешь работать с задачами через  fileBackedTasksManager, вся история будет сохраняться в historyManager, а из этого поля ты уже сможешь вытащить список задач viewedTasks(а потом и айдишники, которые ты запишешь в файл)"
- */
-                    //
+
                 case 0: // Выход
                     menu = false;
                     break;
@@ -206,12 +186,12 @@ public class Main {
         System.out.println("1 - Добавить новую задачу");
         System.out.println("2 - Получить список всех задач");
         System.out.println("3 - Удалить все задачи");
-        System.out.println("4 - Получить по идентификатору");
-        System.out.println("5 - Обновить по идентификатору");
-        System.out.println("6 - Удалить по идентификатору");
-        System.out.println("7 - Изменить статус");
+        System.out.println("4 - Посмотреть задачу по идентификатору");
+        System.out.println("5 - Обновить задачу по идентификатору");
+        System.out.println("6 - Удалить задачу по идентификатору");
+        System.out.println("7 - Изменить статус задачи");
         System.out.println("8 - Получение списка всех подзадач определённого эпика");
-        System.out.println("9 - Информация по просмотрам");
+        System.out.println("9 - Информация по просмотрам задач");
         System.out.println("10 - Сохранить задачи");
 
         System.out.println("0 - Выход");
@@ -235,30 +215,10 @@ public class Main {
         System.out.println("3 - Удалить все подзадачи");
     }
 
-    public static void printMenuCase4() {
-        System.out.println("1 - Получить задачу по идентификатору");
-        System.out.println("2 - Получить эпик по идентификатору");
-        System.out.println("3 - Получить подзадачу по идентификатору");
-    }
-
-
     public static void printMenuCase5() {
         System.out.println("1 - Обновление задачи по идентификатору");
         System.out.println("2 - Обновление епика по идентификатору");
         System.out.println("3 - Обновление подзадачи по идентификатору");
     }
 
-    public static void printMenuCase6() {
-        System.out.println("1 - Удалить задачу по идентификатору");
-        System.out.println("2 - Удалить епик по идентификатору");
-        System.out.println("3 - Удалить подзадачу по идентификатору");
-    }
-
-    public static void printMenuCase7() {
-        System.out.println("1 - Изменить статус задачи");
-        System.out.println("2 - Изменить статус епика");
-        System.out.println("3 - Изменить статус подзадачи");
-    }
-
 }
-

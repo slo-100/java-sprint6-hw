@@ -3,6 +3,8 @@ package main.java.tasks;
 import main.java.service.Status;
 import main.java.service.TaskType;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -81,12 +83,25 @@ public class Task {
 
     @Override
     public String toString() {
-        return "main.java.tasks.Task{" + "id=" + id + ", name='" + name + '\'' + ", description='" + description + '\'' + ", status='" + status + '\'' + '}';
+        return "Task{" + "id=" + id + ", name='" + name + '\'' + ", description='" + description + '\'' + ", status='" + status + '\'' + '}';
     }
 
     public String toCsvFormat() { // Напишите метод сохранения задачи в строку (ТЗ-6)
         String result;
         result = id + "," + taskType + "," + name + "," + status + "," + description;
         return result;
+    }
+
+
+
+// refactoring
+    public List<UUID> getSubtasks() {
+        System.out.println("test");
+        List<UUID> list = new ArrayList<>();
+        return list;
+    }
+
+    public UUID getEpicId() {
+        return null;
     }
 }
