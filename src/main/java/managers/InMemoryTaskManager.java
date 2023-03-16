@@ -13,9 +13,6 @@ import java.util.stream.Collectors;
 public class InMemoryTaskManager implements TaskManager {
     private HashMap<UUID, Task> tasks = new HashMap<>();
     public HistoryManager historyManager = Managers.getDefaultHistory();
-    public HistoryManager getHistoryManager() {
-        return historyManager;
-    }
 
     @Override
     public void addNewTask(Task task) {
@@ -39,7 +36,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public List<Task> getAllTasksByTaskType(TaskType taskType) {
         List<Task> list = tasks.entrySet().stream()
-                .filter( t -> t.getValue().getTaskType().equals(taskType))
+                .filter(t -> t.getValue().getTaskType().equals(taskType))
                 .map(Map.Entry::getValue)
                 .collect(Collectors.toList());
         return list;
@@ -48,10 +45,9 @@ public class InMemoryTaskManager implements TaskManager {
     // case 3: Удаление всех задач по типу.---------------------------------------
     @Override
     public void taskClean(TaskType taskType) {
-        if (taskType.equals(TaskType.SUBTASK)) {
-            for (Task task : tasks.values()) {
-                task.getSubtasks().clear(); // удаление списка подзадач у Эпиков
-            }
+       if (taskType.equals(TaskType.SUBTASK)) {
+            tasks.values().stream()
+                    .forEach(t -> t.getSubtasks().clear()); // удаление списка подзадач у Эпиков
         }
         tasks.entrySet().removeIf(entry -> taskType.equals(entry.getValue().getTaskType()));
     }
@@ -59,13 +55,13 @@ public class InMemoryTaskManager implements TaskManager {
     // ТЗ-4
     // case 4:get методы-------------------------------------------------------------
     @Override
-    public Task getTaskById(UUID idInput) {
+    public void getTaskById(UUID idInput) {
         Task task = null;
         if (tasks.containsKey(idInput)) {
             task = tasks.get(idInput);
             historyManager.add(task);
         }
-        return task;
+
     }
 
     // case 5: Обновление. Новая версия объекта с верным идентификатором передаётся в виде параметра.
@@ -85,6 +81,11 @@ public class InMemoryTaskManager implements TaskManager {
         historyManager.remove(id);
         System.out.println("Задача удалена");
 
+//        tasks.entrySet().stream()
+//                .filter(t -> t.getKey().equals(id))
+//                .filter(t -> t.getValue().getTaskType().equals(TaskType.SUBTASK))
+//                .map(t -> t.getValue().getTaskType().equals(TaskType.SUBTASK))
+//                .forEach(updateEpicStatus(id));
         if (tasks.containsKey(id)) {
             if (tasks.get(id).getTaskType().equals(TaskType.SUBTASK)) {
                 for (Task value : tasks.values()) {
@@ -135,6 +136,7 @@ public class InMemoryTaskManager implements TaskManager {
             // *или все они имеют статус NEW
             if (tasks.get(id).getSubtasks().size() != 0) { // проверить на ноль
                 int counterNew = 0;
+
                 for (int i = 0; i < tasks.get(id).getSubtasks().size(); i++) { // итерация листа с id подзадач
                     if (tasks.get(tasks.get(id).getSubtasks().get(i)).getStatus().equals(Status.NEW)) {
                         counterNew++;
@@ -176,8 +178,10 @@ public class InMemoryTaskManager implements TaskManager {
         return historyManager.getCustomLinkedList();
     }
 
-
     public HashMap<UUID, Task> getTasks() {
         return tasks;
     }
+
+
+
 }

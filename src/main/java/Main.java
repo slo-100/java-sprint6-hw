@@ -103,7 +103,7 @@ public class Main {
                 case 4: // получение по id
                     System.out.println("Введите номер идентификатора");
                     UUID taskId = UUID.fromString(scanner.next());
-                    System.out.println(fileBackedTasksManager.getTaskById(taskId));
+                    System.out.println();
                     break;
 
                 case 5: // обновление по id Посмотреть ТЗ по Id или сама задачи
@@ -156,8 +156,8 @@ public class Main {
                     break;
 
                 case 8: // Получение списка всех подзадач определённого эпика.
-                    System.out.println("Получение списка всех подзадач определённого эпика\n" + "Введите id эпика, чтобы получить его подзадачи");
-                    UUID epicId = UUID.fromString(scanner.nextLine());
+                    System.out.println("Получение списка всех подзадач определённого эпика\n" + "Введите id эпика, чтобы получить его подзадачи:");
+                    UUID epicId = UUID.fromString(scanner.next());
                     System.out.println(fileBackedTasksManager.getSubtaskList(epicId));
                     break;
 
@@ -168,7 +168,7 @@ public class Main {
                     break;
 
                 case 10: // Сохранить в файл
-                    fileBackedTasksManager.saveToFile();
+//                    fileBackedTasksManager.save();
 //                    System.out.println("test3 getViewedTasks(): " + fileBackedTasksManager.historyManager.getCustomLinkedList());
 //                    fileBackedTasksManager.historyManager.getCustomLinkedList().stream()
 //                            .forEach(task -> {System.out.println(task.getId());});

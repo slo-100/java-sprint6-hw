@@ -7,7 +7,7 @@ import main.java.tasks.Task;
 import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    private CustomLinkedList<Task> customLinkedList = new CustomLinkedList<>(); // класс с нодами
+    private final CustomLinkedList<Task> customLinkedList = new CustomLinkedList<>(); // класс с нодами
 
     @Override
     public void add(Task task) {
@@ -67,14 +67,12 @@ class CustomLinkedList<Task> {
             head = null;
             tail = null;
         } else {
-
             if (node.prev == null) {
                 head = node.next;
             } else {
                 node.prev.next = node.next;
                 node.prev = null;
             }
-
             if (node.next == null) {
                 tail = node.prev;
             } else {

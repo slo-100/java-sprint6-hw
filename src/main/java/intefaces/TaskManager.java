@@ -15,7 +15,7 @@ public interface TaskManager {
 
     void taskClean(TaskType taskType);
 
-    Task getTaskById(UUID taskId);
+    void getTaskById(UUID taskId);
 
     void updateTask(Task task);
 
@@ -29,7 +29,4 @@ public interface TaskManager {
     void updateEpicStatus(UUID epicId);
 
     List<Task> getHistoryList();
-
-    HistoryManager getHistoryManager();
-
 }

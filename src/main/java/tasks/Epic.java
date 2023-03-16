@@ -55,14 +55,14 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        return "Epic{" + "id=" + getId() + ", subtasksList=" + subtasks + ", name='" + getName()
-                + '\'' + ", description='" + getDescription() + '\'' + ", status='" + getStatus() + '\'' + '}';
+        return "Epic{" + "id=" + getId() + ", taskType=" + getTaskType() + ", name='" + getName()
+                + '\'' + ", description='" + getDescription() + '\'' + ", status='" + getStatus() + '\'' + ", subtasksList=" + subtasks + '}';
     }
 
-//    @Override
-//    public String toCsvFormat() {
-//        String result;
-//        result = getId() + "," + getTaskType() + "," + getName() + "," + getStatus() + "," + getDescription();
-//        return result;
-//    }
+    @Override
+    public String toCsvFormat() {
+        String result;
+        result = getId() + "," + getTaskType() + "," + getName() + "," + getStatus() + "," + getDescription();
+        return result;
+    }
 }

@@ -83,7 +83,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Task{" + "id=" + id + ", name='" + name + '\'' + ", description='" + description + '\'' + ", status='" + status + '\'' + '}';
+        return "Task{" + "id=" + id + ", taskType=" + taskType + ", name='" + name + '\'' + ", description='" + description + '\'' + ", status='" + status + '\'' + '}';
     }
 
     public String toCsvFormat() { // Напишите метод сохранения задачи в строку (ТЗ-6)
@@ -96,7 +96,6 @@ public class Task {
 
 // refactoring
     public List<UUID> getSubtasks() {
-        System.out.println("test");
         List<UUID> list = new ArrayList<>();
         return list;
     }
