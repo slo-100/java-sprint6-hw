@@ -45,7 +45,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         fileBackedTasksManager.getTaskById(subtask1.getId());
 
 
-        System.out.println("при помощи методов менеджер1.getTasks() и менеджер1.getHistoryList() выводишь задачи историю в консоль");
+        System.out.println("вывод всех задач менеджера 1:");
         fileBackedTasksManager.getTasks().values().stream().forEach(t -> System.out.println(t));
         System.out.println();
         fileBackedTasksManager.getHistoryList().stream().forEach(task -> System.out.println(task));
@@ -53,9 +53,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         System.out.println();
 
         FileBackedTasksManager fileBackedTasksManager2 = loadFromFile(fileBackedTasksManager.file);
-        System.out.println("- вывести в консоль все задачаи и историю менеджера2");
+        System.out.println("вывод всех задач менеджера 2:");
         fileBackedTasksManager2.taskfromString().stream().forEach(System.out::println);
-        System.out.println("История просмотров:");
+        System.out.println("вывод истории просмотров менеджера 2:");
         fileBackedTasksManager2.getHistoryTasks().stream().forEach(System.out::println); // если без стрима то пишет ошибку на println
 
 
@@ -71,8 +71,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         try {
             manager.historyFromString(file);
         } catch (IOException e) {
-            throw new RuntimeException(e);
-            // не понимаю что именно может пойти не так? типа сообщение в консоль какоето вызвать?
+            throw new ManagerSaveException("Файл с состоянием таск менеджера не найден или поврежден");
         }
         return manager;
     }
@@ -99,27 +98,22 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     private void save() {
         try (BufferedWriter out = new BufferedWriter(new FileWriter(file, StandardCharsets.UTF_8))) {
-            String viewedTasksIdToLine = "";
-            int count = 0;
-
             out.write("id,type,name,status,description,epic\n");
             for (Task task : getTasks().values()) {
                 out.write(task.toCsvFormat() + "\n");
             }
-
             out.write("\n"); // пустая строка после задач
-            var lastLine = historyToString(historyManager);
-
+            var lastLine = historyToString(getHistoryManager());
             out.write(lastLine);
         } catch (IOException e) {
-            throw new ManagerSaveException(e.getMessage());
+            e.printStackTrace();
+            throw new ManagerSaveException("файл не найден");
         }
     }
 
-    static String historyToString(HistoryManager manager) {
-       String history = manager.getCustomLinkedList().stream()
+    private static String historyToString(HistoryManager manager) {
+        return manager.getCustomLinkedList().stream()
                 .map(task -> task.getId().toString()).collect(Collectors.joining(","));
-        return history;
     }
 
     // ТЗ-6. Напишите метод создания задачи из строки
@@ -233,15 +227,30 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return listOfStrings;
     }
 
+
+    // "модифицирующую операцию" как-то слишком завуалированно звучит тем более для студентов без опыта программирования не кажется?, им в ТЗ так и надо прописать "переопределить все методы которые меняют состояние менеджера: добавление, удаление, обновление, просмотр задач" чтоб и ежу было понятно
+    //* так понимаю это все нужно для метода save(), чтоб каждый раз сохранял
     @Override
-    public void addNewTask(Task task) {
+    public void addNewTask(Task task) { // добавление
         super.addNewTask(task);
         save();
     }
 
     @Override
-    public void getTaskById(UUID idInput) {
+    public void getTaskById(UUID idInput) { // просмотр
         super.getTaskById(idInput);
+        save();
+    }
+
+    @Override
+    public void updateTask(Task task) { // обновление
+        super.updateTask(task);
+        save();
+    }
+
+    @Override
+    public void removeTaskById(UUID id) { // удаление
+        super.getTaskById(id);
         save();
     }
 

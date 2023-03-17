@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 public class InMemoryTaskManager implements TaskManager {
     private HashMap<UUID, Task> tasks = new HashMap<>();
-    public HistoryManager historyManager = Managers.getDefaultHistory();
+    private HistoryManager historyManager = Managers.getDefaultHistory();
 
     @Override
     public void addNewTask(Task task) {
@@ -182,6 +182,7 @@ public class InMemoryTaskManager implements TaskManager {
         return tasks;
     }
 
-
-
+    public HistoryManager getHistoryManager() {
+        return historyManager;
+    }
 }
