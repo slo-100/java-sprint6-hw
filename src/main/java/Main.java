@@ -19,19 +19,19 @@ public class Main {
         FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(file);
         List<UUID> subtasksList = new ArrayList<>(); // пока так
         Task task1 = new Task(TaskType.TASK, "Переезд", Status.NEW, "Собрать коробки");
-        Task task2 = new Task(TaskType.TASK, "Переезд", Status.NEW, "Упаковать кошку");
-        Task task3 = new Task(TaskType.TASK, "Переезд", Status.NEW, "Сказать слова прощания");
+//        Task task2 = new Task(TaskType.TASK, "Переезд", Status.NEW, "Упаковать кошку");
+//        Task task3 = new Task(TaskType.TASK, "Переезд", Status.NEW, "Сказать слова прощания");
 
 
         Epic epic1 = new Epic(UUID.randomUUID(), TaskType.EPIC, "Переезд", Status.NEW, "Переезд", subtasksList);
-        Epic epic2 = new Epic(UUID.randomUUID(), TaskType.EPIC, "Переезд2", Status.NEW, "Переезд2", subtasksList);
+//        Epic epic2 = new Epic(UUID.randomUUID(), TaskType.EPIC, "Переезд2", Status.NEW, "Переезд2", subtasksList);
 
         Subtask subtask1 = new Subtask(TaskType.SUBTASK, "тест1", Status.NEW,
                 "Собрать коробки", epic1.getId());
         Subtask subtask2 = new Subtask(TaskType.SUBTASK, "тест2", Status.NEW,
                 "Упаковать кошку", epic1.getId());
-        Subtask subtask3 = new Subtask(TaskType.SUBTASK, "тест3", Status.NEW,
-                "Сказать слова прощания", epic1.getId());
+//        Subtask subtask3 = new Subtask(TaskType.SUBTASK, "тест3", Status.NEW,
+//                "Сказать слова прощания", epic1.getId());
 
         boolean menu = true;
         while (menu) {
@@ -45,17 +45,17 @@ public class Main {
                     switch (userInputCase1) {
                         case 1:
                             fileBackedTasksManager.addNewTask(task1);
-                            fileBackedTasksManager.addNewTask(task2);
-                            fileBackedTasksManager.addNewTask(task3);
+//                            fileBackedTasksManager.addNewTask(task2);
+//                            fileBackedTasksManager.addNewTask(task3);
                             break;
                         case 2:
                             fileBackedTasksManager.addNewTask(epic1);
-                            fileBackedTasksManager.addNewTask(epic2);
+//                            fileBackedTasksManager.addNewTask(epic2);
                             break;
                         case 3:
                             fileBackedTasksManager.addNewTask(subtask1);
                             fileBackedTasksManager.addNewTask(subtask2);
-                            fileBackedTasksManager.addNewTask(subtask3);
+//                            fileBackedTasksManager.addNewTask(subtask3);
                             break;
                     }
                     break;
@@ -103,7 +103,8 @@ public class Main {
                 case 4: // получение по id
                     System.out.println("Введите номер идентификатора");
                     UUID taskId = UUID.fromString(scanner.next());
-                    System.out.println();
+                    fileBackedTasksManager.getTaskById(taskId);
+
                     break;
 
                 case 5: // обновление по id Посмотреть ТЗ по Id или сама задачи
@@ -113,8 +114,8 @@ public class Main {
                     String taskIdCase5 = scanner.next();
                     switch (userInputCase5) {
                         case 1:
-                            task3.setDescription("Сказать слова прощания test Case5");
-                            fileBackedTasksManager.updateTask(task3);
+                            task1.setDescription("Сказать слова прощания test Case5");
+                            fileBackedTasksManager.updateTask(task1);
                             break;
                         case 2:
 
@@ -158,7 +159,7 @@ public class Main {
                 case 8: // Получение списка всех подзадач определённого эпика.
                     System.out.println("Получение списка всех подзадач определённого эпика\n" + "Введите id эпика, чтобы получить его подзадачи:");
                     UUID epicId = UUID.fromString(scanner.next());
-                    System.out.println(fileBackedTasksManager.getSubtaskList(epicId));
+                    fileBackedTasksManager.getSubtaskList(epicId).stream().forEach(System.out::println);
                     break;
 
                 // ТЗ-4

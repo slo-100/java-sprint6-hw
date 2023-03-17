@@ -35,6 +35,13 @@ public class InMemoryTaskManager implements TaskManager {
     // case 2: Получение списка всех задач.-------------------------------------
     @Override
     public List<Task> getAllTasksByTaskType(TaskType taskType) {
+
+        for (Task task : tasks.values()) { // итерация по типу для добавления в историю
+            if (task.getTaskType().equals(taskType)) {
+                historyManager.add(task);
+            }
+        }
+
         List<Task> list = tasks.entrySet().stream()
                 .filter(t -> t.getValue().getTaskType().equals(taskType))
                 .map(Map.Entry::getValue)
@@ -45,8 +52,14 @@ public class InMemoryTaskManager implements TaskManager {
     // case 3: Удаление всех задач по типу.---------------------------------------
     @Override
     public void taskClean(TaskType taskType) {
-       if (taskType.equals(TaskType.SUBTASK)) {
-            tasks.values().stream()
+        for (Task task : tasks.values()) { // итерация по типу для удаления из истории
+            if (task.getTaskType().equals(taskType)) {
+                historyManager.remove(task.getId());
+            }
+        }
+
+        if (taskType.equals(TaskType.SUBTASK)) {
+        tasks.values().stream()
                     .forEach(t -> t.getSubtasks().clear()); // удаление списка подзадач у Эпиков
         }
         tasks.entrySet().removeIf(entry -> taskType.equals(entry.getValue().getTaskType()));
@@ -113,13 +126,17 @@ public class InMemoryTaskManager implements TaskManager {
 
     // case 8: Получение списка всех подзадач определённого эпика. -----------------------------
     @Override
-    public List<UUID> getSubtaskList(UUID epicId) {
+    public List<Task> getSubtaskList(UUID epicId) {
+        List<Task> list = new ArrayList<>();
         for (UUID id : tasks.keySet()) {
-            if (tasks.get(id).getId() == epicId) {
-                return tasks.get(id).getSubtasks();
+            if (tasks.get(id).getId().equals(epicId)) {
+                for (UUID subtaskUUID : tasks.get(epicId).getSubtasks()) { // итерация листа подзадач эпика
+                    historyManager.add(tasks.get(subtaskUUID)); // добавляем в историю каждую подзадачу эпика (так как просмотриваются все подзадачи)
+                    list.add(tasks.get(subtaskUUID));
+                }
             }
         }
-        return null;
+        return list;
     }
 
     // метод обновления статуса епика

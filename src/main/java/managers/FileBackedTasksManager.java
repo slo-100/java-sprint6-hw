@@ -236,6 +236,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         save();
     }
 
+
     @Override
     public void getTaskById(UUID idInput) { // просмотр
         super.getTaskById(idInput);
@@ -250,8 +251,36 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     @Override
     public void removeTaskById(UUID id) { // удаление
-        super.getTaskById(id);
+        super.removeTaskById(id);
         save();
+    }
+
+
+
+    @Override
+    public List<Task> getAllTasksByTaskType(TaskType taskType) { // просмотр всех задач
+        List<Task> list = super.getAllTasksByTaskType(taskType);
+        save();
+        return list;
+    }
+
+    @Override
+    public void taskClean(TaskType taskType) { // удаление всех задач
+        super.taskClean(taskType);
+        save();
+    }
+
+    @Override
+    public void changeStatusTask(UUID id, Status status) { // изменение статуса
+        super.changeStatusTask(id, status);
+        save();
+    }
+
+    @Override
+    public List<Task> getSubtaskList(UUID epicId) { // Получение списка всех подзадач определённого эпика
+        List <Task> list = super.getSubtaskList(epicId);
+        save();
+        return list;
     }
 
 }

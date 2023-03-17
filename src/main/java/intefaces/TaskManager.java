@@ -24,7 +24,7 @@ public interface TaskManager {
     void changeStatusTask(UUID id, Status status);
 
 
-    List<UUID> getSubtaskList(UUID epicId);
+    List<Task> getSubtaskList(UUID epicId);
 
     void updateEpicStatus(UUID epicId);
 
